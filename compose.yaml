@@ -1,0 +1,27 @@
+version: "3"
+
+networks:
+  live_prometheus:
+    driver: bridge
+
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    networks:
+      - live_prometheus
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+  blackbox:
+    image: quay.io/prometheus/blackbox-exporter
+    ports:
+      - 9115:9115
+    networks:
+      - live_prometheus
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - live_prometheus

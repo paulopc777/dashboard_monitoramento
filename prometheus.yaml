@@ -1,0 +1,58 @@
+global:
+  scrape_interval: 3m
+  scrape_timeout: 10s
+alerting:
+  alertmanagers:
+    - follow_redirects: true
+      enable_http2: true
+      scheme: http
+      timeout: 10s
+      api_version: v2
+      static_configs:
+        - targets: []
+scrape_configs:
+  - job_name: MonitchatAPIV2
+    honor_timestamps: true
+    scrape_interval: 3m
+    scrape_timeout: 10s
+    metrics_path: /api/metrics
+    static_configs:
+      - targets:
+          - api-v2.monitchat.com
+  - job_name: prometheus
+    honor_timestamps: true
+    scrape_interval: 3m
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    follow_redirects: true
+    static_configs:
+      - targets:
+          - localhost:9090
+  - job_name: "blackbox"
+    metrics_path: /probe
+    params:
+      module: [http_2xx] # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+          - https://new.monitchat.com/login
+          - https://api-v2.monitchat.com/
+          - https://api-v4.monitchat.com/
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 192.168.100.10:9115 # The blackbox exporter's real hostname:port.
+  - job_name: "blackbox_exporter" # collect blackbox exporter's operational metrics.
+    static_configs:
+      - targets: ["192.168.100.10:9115"]
+  - job_name: "MonitchatMonitor"
+    honor_timestamps: true
+    scrape_interval: 15m
+    scrape_timeout: 5m
+    metrics_path: /api/metrics
+    static_configs:
+      - targets:
+          - 192.168.100.10:4080
