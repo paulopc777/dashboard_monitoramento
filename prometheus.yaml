@@ -44,10 +44,10 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: 192.168.100.10:9115 # The blackbox exporter's real hostname:port.
+        replacement: 192.168.102.9:9115 # The blackbox exporter's real hostname:port.
   - job_name: "blackbox_exporter" # collect blackbox exporter's operational metrics.
     static_configs:
-      - targets: ["192.168.100.10:9115"]
+      - targets: ["192.168.102.9:9115"]
   - job_name: "MonitchatMonitor"
     honor_timestamps: true
     scrape_interval: 15m
@@ -55,4 +55,4 @@ scrape_configs:
     metrics_path: /api/metrics
     static_configs:
       - targets:
-          - 192.168.100.10:4080
+          - 192.168.102.9:4080

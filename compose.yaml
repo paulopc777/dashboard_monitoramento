@@ -25,3 +25,11 @@ services:
       - 3000:3000
     networks:
       - live_prometheus
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4080:4080
+    networks:
+      - live_prometheus
